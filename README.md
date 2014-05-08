@@ -53,7 +53,7 @@ If you are behind a firewall and you need to use the https protocol instead of t
 
 Next, enter the `julia/` directory and run `make` to build the `julia` executable. To perform a parallel build, use `make -j N` and supply the maximum number of concurrent processes.
 When compiled the first time, it will automatically download and build its [external dependencies](#Required-Build-Tools-External-Libraries).
-This takes a while, but only has to be done once. If the defaults in the build do not work for you, and you need to set specific make parameters, you can save them in `Make.user`. The build will automatically check for the existence of `Make.user` and use it if it exists.
+This takes a while, but only has to be done once. If the defaults in the build do not work for you, and you need to set specific make parameters, you can save them in `Make.inc`. The build will automatically check for the existence of `Make.inc` and use it if it exists.
 Building Julia requires 1.5GiB of disk space and approximately 700MiB of virtual memory.
 
 If you need to build Julia in an environment that does not allow access to the outside world, use `make -C deps getall` to download all the necessary files. Then, copy the julia directory over to the target environment and build with `make`.
@@ -100,7 +100,7 @@ Julia does not install anything outside the directory it was cloned into. Julia 
 #### General
 
 * GCC version 4.6 or later is recommended to build Julia.
-* To use external shared libraries not in the system library search path, set `USE_SYSTEM_XXX=1` and `LDFLAGS=-Wl,-rpath /path/to/dir/contains/libXXX.so` in `Make.user`.
+* To use external shared libraries not in the system library search path, set `USE_SYSTEM_XXX=1` and `LDFLAGS=-Wl,-rpath /path/to/dir/contains/libXXX.so` in `Make.inc`.
   * Instead of setting `LDFLAGS`, putting the library directory into the environment variable `LD_LIBRARY_PATH` (at both compile and run time) also works.
 * See also the [external dependencies](#Required-Build-Tools-External-Libraries).
 
@@ -114,7 +114,7 @@ For a fast and easy current installation, the `before_install` section of [travi
 
 On RHEL/CentOS 5 systems, the default compiler (`gcc` 4.1) is too old to build Julia.
 
-If the `gcc44` and `gfortran44` packages are installed, you can specify their use by adding the following to Make.user
+If the `gcc44` and `gfortran44` packages are installed, you can specify their use by adding the following to Make.inc
 
     FC = gfortran44
     CC = gcc44
@@ -141,7 +141,7 @@ Now you should be able to build using the generic Linux instructions. These inst
 
  Problem              | Possible Solution
 ------------------------|---------------------
- OpenBLAS build failure | Set one of the following build options in `Make.user` and build again: <ul><li> `OPENBLAS_TARGET_ARCH=BARCELONA` (AMD CPUs) or `OPENBLAS_TARGET_ARCH=NEHALEM` (Intel CPUs)<ul>Set `OPENBLAS_DYNAMIC_ARCH = 0` to disable compiling multiple architectures in a single binary.</ul></li><li> `USE_SYSTEM_BLAS=1` uses the system provided `libblas` <ul><li>Set `LIBBLAS=-lopenblas` and `LIBBLASNAME=libopenblas` to force the use of the system provided OpenBLAS when multiple BLAS versions are installed </li></ul></li></ul>
+ OpenBLAS build failure | Set one of the following build options in `Make.inc` and build again: <ul><li> `OPENBLAS_TARGET_ARCH=BARCELONA` (AMD CPUs) or `OPENBLAS_TARGET_ARCH=NEHALEM` (Intel CPUs)<ul>Set `OPENBLAS_DYNAMIC_ARCH = 0` to disable compiling multiple architectures in a single binary.</ul></li><li> `USE_SYSTEM_BLAS=1` uses the system provided `libblas` <ul><li>Set `LIBBLAS=-lopenblas` and `LIBBLASNAME=libopenblas` to force the use of the system provided OpenBLAS when multiple BLAS versions are installed </li></ul></li></ul>
  Illegal Instruction error | Check if your CPU supports AVX while your OS does not (e.g. through virtualization, as described in [this issue](https://github.com/JuliaLang/julia/issues/3263)), and try installing LLVM 3.3 instead of LLVM 3.2.
 
 ### OS X
@@ -234,7 +234,7 @@ Julia uses the following external libraries, which are automatically downloaded 
 <a name="System-Provided-Libraries">
 ### System Provided Libraries
 
-If you already have one or more of these packages installed on your system, you can prevent Julia from compiling duplicates of these libraries by passing `USE_SYSTEM_...=1` to `make` or adding the line to `Make.user`. The complete list of possible flags can be found in `Make.inc`. 
+If you already have one or more of these packages installed on your system, you can prevent Julia from compiling duplicates of these libraries by passing `USE_SYSTEM_...=1` to `make` or adding the line to `Make.inc`. The complete list of possible flags can be found in `Make.inc`. 
 
 Please be aware that this procedure is not officially supported, as it introduces additional variability into the installation and versioning of the dependencies, and is recommended only for system package maintainers. Unexpected compile errors may result, as the build system will do no further checking to ensure the proper packages are installed.
 
@@ -249,7 +249,7 @@ To use the Intel [MKL] BLAS and LAPACK libraries, make sure that MKL version 10.
     source /path/to/mkl/bin/mklvars.sh intel64 ilp64
     export MKL_INTERFACE_LAYER=ILP64
 
-When building julia, pass the `USE_MKL=1` option to `make` or add the following line to `Make.user`.
+When building julia, pass the `USE_MKL=1` option to `make` or add the following line to `Make.inc`.
 
     USE_MKL = 1
 
